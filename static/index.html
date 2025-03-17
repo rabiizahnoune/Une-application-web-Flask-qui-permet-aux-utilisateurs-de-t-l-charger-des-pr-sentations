@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Slide Downloader</title>
+</head>
+<body>
+    <h1>Download Presentation Slides as PDF</h1>
+    <input type="text" id="tech" placeholder="Enter technology (e.g., kafka)">
+    <button onclick="downloadSlides()">Download</button>
+    <p id="status"></p>
+    <a id="downloadLink" style="display:none" download="presentation.pdf">Download PDF</a>
+
+    <script>
+        async function downloadSlides() {
+            const tech = document.getElementById("tech").value;
+            const status = document.getElementById("status");
+            status.textContent = "Processing...";
+
+            const response = await fetch('/download', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ technology: tech })
+            });
+
+            const result = await response.json();
+            status.textContent = result.message;
+            if (result.success) {
+                const link = document.getElementById("downloadLink");
+                link.href = result.pdf_path;
+                link.style.display = "block";
+            }
+        }
+    </script>
+</body>
+</html>
